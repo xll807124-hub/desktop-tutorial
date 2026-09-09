@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>李兴泷 · 桌面运维</title>
+<style>
+    :root {
+      --bg: #f6f5f2;
+      --paper: #ffffff;
+      --ink: #121212;
+      --muted: #5c5c5c;
+      --line: #e6e4df;
+      --soft: #f0eeea;
+      --accent: #0f6e56;
+      --accent-soft: #e6f3ef;
+      --shadow: 0 1px 2px rgba(18, 18, 18, 0.04), 0 8px 24px rgba(18, 18, 18, 0.04);
+      --radius: 10px;
+      --font: "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font);
+      background:
+        radial-gradient(1200px 600px at 10% -10%, #e8f4ef 0%, transparent 55%),
+        radial-gradient(900px 500px at 100% 0%, #efece6 0%, transparent 50%),
+        var(--bg);
+      color: var(--ink);
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: var(--accent); text-decoration: none; border-bottom: 1px solid transparent; transition: border-color .2s, color .2s; }
+    a:hover { border-bottom-color: var(--accent); }
+
+    .wrap {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 36px 20px 80px;
+    }
+
+    .sheet {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .hero {
+      display: flex;
+      gap: 20px;
+      height: 180px;
+      align-items: flex-start;
+      padding: 1.5% 3% 1.5% 5%;
+      border-bottom: 1px solid var(--line);
+      background: linear-gradient(180deg, #fbfbfa 0%, #fff 100%);
+    }
+
+    .avatar {
+      flex: 0 0 auto;
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 2px solid #fff;
+      box-shadow: 0 0 0 1px var(--line), 0 8px 20px rgba(18, 18, 18, 0.08);
+      background: transparent;
+    }
+    .avatar img {
+      width: 160%;
+      height: 160%;
+      margin: -25% -30%;
+      object-fit: contain;
+      object-position: center center;
+      display: block;
+      transform: scale(0.8);
+      transform-origin: center center;
+    }
+    @media (max-width: 767px) {
+      .avatar { width: 72px; height: 72px; }
+    }
+
+    .hero-main {
+      flex: 1;
+      display: flex;
+      min-width: 0;
+      height: 150px;
+      justify-content: center;
+      align-items: flex-start;
+      flex-direction: column;
+      margin: auto 0 auto 2%;
+    }
+    .name-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: 10px 14px;
+      margin-bottom: 8px;
+    }
+    .name {
+      font-size: 34px;
+      font-weight: 750;
+      letter-spacing: 0.04em;
+      line-height: 1.1;
+    }
+    .role-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 650;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: var(--accent-soft);
+      border: 1px solid #cfe6de;
+      border-radius: 999px;
+      padding: 5px 10px;
+    }
+    .tagline {
+      font-size: 15px;
+      color: var(--muted);
+      margin-bottom: 14px;
+      max-width: 52ch;
+    }
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 10px;
+      color: var(--muted);
+    }
+    .meta span, .meta a {
+      display: inline-flex;
+      align-items: center;
+      font-size: 18px;
+      gap: 8px;
+    }
+    .dot { width: 3px; height: 3px; border-radius: 50%; background: #b0aea8; margin: auto 0; }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 0;
+    }
+
+    .side {
+      padding: 25px 25px 30px;
+      background: #faf9f7;
+      border-right: 1px solid var(--line);
+    }
+    .main { padding: 28px 32px 40px; }
+
+    .sec { margin-bottom: 28px; }
+    .sec:last-child { margin-bottom: 0; }
+    .sec-title {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .sec-title::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: var(--line);
+    }
+
+    .stack-group { margin-bottom: 16px; }
+    .stack-label {
+      font-size: 12px;
+      font-weight: 650;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+    }
+    .tag {
+      font-size: 12px;
+      color: var(--ink);
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      padding: 4px 8px;
+      transition: transform .18s ease, border-color .18s ease, background .18s ease, color .18s ease;
+    }
+    .tag:hover {
+      transform: translateY(-2px);
+      border-color: #9ecabb;
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+
+    .info-block {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.7;
+      display: flex;
+    }
+    .info-block strong {
+      display: block;
+      color: var(--ink);
+      font-weight: 700;
+    }
+    .info-block p {
+      margin-left: auto;
+    }
+
+    .job, .edu {
+      padding: 12px 0;
+      border-bottom: 1px dashed var(--line);
+    }
+    .job:last-child, .edu:last-child { border-bottom: 0; padding-bottom: 0; }
+    .job-top, .edu-top {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 4px 12px;
+      margin-bottom: 6px;
+    }
+    .job-co, .edu-school { font-weight: 700; font-size: 15px; }
+    .job-meta, .edu-meta { font-size: 12px; color: var(--muted); }
+    .job-role {
+      font-size: 13px;
+      color: var(--accent);
+      font-weight: 650;
+      margin-bottom: 8px;
+    }
+
+    .bullets {
+      list-style: none;
+      display: grid;
+      gap: 7px;
+      margin-bottom: 0;
+    }
+    .bullets li {
+      position: relative;
+      padding-left: 14px;
+      font-size: 13.5px;
+      color: #2a2a2a;
+    }
+    .bullets li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0.62em;
+      width: 5px;
+      height: 5px;
+      border-radius: 1px;
+      background: var(--accent);
+      transform: rotate(45deg);
+    }
+
+    .highlights {
+      font-size: 12.5px;
+      color: var(--muted);
+      background: #f8f7f4;
+      border-left: 2px solid var(--accent);
+      padding: 8px 10px;
+      border-radius: 0 6px 6px 0;
+      margin-top: 10px;
+    }
+    .highlights strong { color: var(--ink); font-weight: 650; }
+
+    .to-top {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      z-index: 50;
+      width: 42px;
+      height: 42px;
+      border: 1px solid var(--line);
+      border-radius: 50%;
+      background: rgba(255,255,255,0.92);
+      color: var(--ink);
+      box-shadow: var(--shadow);
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(8px);
+      transition: opacity .2s, transform .2s, background .2s, color .2s;
+      backdrop-filter: blur(6px);
+    }
+    .to-top.show {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+    .to-top:hover {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+    .to-top svg { width: 18px; height: 18px; }
+
+    @media (max-width: 1024px) {
+      .wrap { padding: 24px 16px 72px; }
+      .hero { padding: 28px 24px 22px; }
+      .side, .main { padding: 20px; }
+      .layout { grid-template-columns: 240px 1fr; }
+      .name { font-size: 30px; }
+    }
+
+    @media (max-width: 767px) {
+      .wrap { padding: 12px 12px 80px; }
+      .sheet { border-radius: 12px; }
+      .hero {
+        flex-direction: column;
+        gap: 14px;
+        padding: 22px 18px 18px;
+        height: auto;
+      }
+      .hero-main { height: auto; margin: 0; }
+      .layout { grid-template-columns: 1fr; }
+      .side {
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+        padding: 20px 18px;
+      }
+      .main { padding: 20px 18px 28px; }
+      .name { font-size: 28px; }
+      .meta span, .meta a { font-size: 14px; }
+      .to-top { right: 14px; bottom: 14px; width: 44px; height: 44px; }
+    }
+
+    @media print {
+      body { background: #fff; }
+      .wrap { padding: 0; max-width: none; }
+      .sheet { box-shadow: none; border: 0; }
+      .to-top { display: none; }
+      .tag:hover { transform: none; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <article class="sheet">
+      <header class="hero">
+        <div class="avatar" title="李兴泷">
+          <img src="avatar.png" alt="李兴泷证件照" width="88" height="88" />
+        </div>
+        <div class="hero-main">
+          <div class="name-row">
+            <h1 class="name">李兴泷</h1>
+            <span class="role-badge">机房维护 / IT运维</span>
+            <span class="job-meta">约 4 年相关经验</span>
+          </div>
+          <p class="tagline">计算机软硬件维修 · 机房与网络运维 · 办公信息化设备保障</p>
+          <div class="meta">
+            <span>出生年月：2001.07</span>
+            <span class="dot" aria-hidden="true"></span>
+            <span>联系电话:</span><a href="tel:17606081630">17606081630</a>
+            <span class="dot" aria-hidden="true"></span>
+            <span>邮箱:</span><a href="mailto:2623494316@qq.com">2623494316@qq.com</a>
+          </div>
+        </div>
+      </header>
+
+      <div class="layout">
+        <aside class="side">
+          <section class="sec">
+            <h2 class="sec-title">教育背景</h2>
+            <div class="info-block">
+              <strong>泉州信息工程学院</strong>
+              <p>本科 · 软件工程</p>
+            </div>
+          </section>
+
+          <section class="sec">
+            <h2 class="sec-title">证书资质</h2>
+            <div class="stack-label" style="flex-direction: column; gap: 4px;">
+              <p>软件评测师（中级） | 软考</p>
+              <br>
+              <p>Microsoft Office Specialist Expert - Excel 2016 Expert | Microsoft</p>
+              <br>
+              <p>界面设计专项能力认证（初级）| 腾讯云计算（评定机构）</p>
+            </div>
+          </section>
+
+          <section class="sec">
+            <h2 class="sec-title">技能栈</h2>
+
+            <div class="stack-group">
+              <div class="stack-label">硬件维修</div>
+              <div class="tags">
+                <span class="tag">台式机 / 笔记本</span>
+                <span class="tag">外设排障</span>
+                <span class="tag">打印机维护</span>
+                <span class="tag">监控设备</span>
+              </div>
+            </div>
+
+            <div class="stack-group">
+              <div class="stack-label">软件与系统</div>
+              <div class="tags">
+                <span class="tag">Windows 装机</span>
+                <span class="tag">系统重装 / 备份</span>
+                <span class="tag">驱动与补丁</span>
+                <span class="tag">环境部署</span>
+                <span class="tag">办公软件配置</span>
+                <span class="tag">病毒查杀</span>
+              </div>
+            </div>
+
+            <div class="stack-group">
+              <div class="stack-label">网络与机房</div>
+              <div class="tags">
+                <span class="tag">局域网排障</span>
+                <span class="tag">网线制作 / 布线</span>
+                <span class="tag">IP / DHCP</span>
+                <span class="tag">服务器巡检</span>
+                <span class="tag">网络中断定位</span>
+              </div>
+            </div>
+
+            <div class="stack-group">
+              <div class="stack-label">运维能力</div>
+              <div class="tags">
+                <span class="tag">日常巡检</span>
+                <span class="tag">故障响应</span>
+                <span class="tag">设备台账</span>
+                <span class="tag">成本控制</span>
+                <span class="tag">办公信息化</span>
+              </div>
+            </div>
+          </section>
+
+          <section class="sec">
+            <h2 class="sec-title">自我评价</h2>
+            <div class="info-block" style="flex-direction: column; gap: 6px;">
+              <p style="margin-left: 0;">具备机房日常维护与多类型设备维修经验，熟悉计算机软硬件、交换机与办公信息化设备的常见故障处理。</p>
+              <p style="margin-left: 0;">响应及时，能独立完成巡检、排障与教学/办公环境搭建，注重以维修替代更换、降低运维成本。</p>
+            </div>
+          </section>
+        </aside>
+
+        <div class="main">
+          <section class="sec">
+            <h2 class="sec-title">工作经历</h2>
+
+            <div class="job">
+              <div class="job-top">
+                <div class="job-co">铁布肯乌散乡人民政府</div>
+                <div class="job-meta">2024.08 — 2026.07</div>
+              </div>
+              <div class="job-role">公共文化服务中心干部</div>
+              <ul class="bullets">
+                <li>负责乡政府宣传工作的策划与执行，利用微信公众号等新媒体平台发布政务信息，提升政务公开透明度。</li>
+                <li>协助完成各类行政文书、新闻稿件的撰写与整理，确保信息传达准确及时。</li>
+                <li>参与组织乡政府文化活动与会议，做好活动宣传与资料归档工作。</li>
+                <li>维护办公信息化设备与宣传器材，保障日常办公与宣传工作的顺利开展。</li>
+              </ul>
+            </div>
+
+            <div class="job">
+              <div class="job-top">
+                <div class="job-co">福建农业职业技术学院</div>
+                <div class="job-meta">2021.01 — 2022.12</div>
+              </div>
+              <div class="job-role">机房维护员（实习）</div>
+              <ul class="bullets">
+                <li>负责学校教学设备的日常维护，确保所有计算机软硬件正常运行，支持教学活动的顺利开展。</li>
+                <li>维护办公室的打印机、监控设备、交换机及服务器，及时处理各类硬件故障。</li>
+                <li>根据教学需求，快速搭建和配置相应的软件教学环境。</li>
+                <li>维修各类故障设备，包括电脑、外设等，有效降低了设备更换成本。</li>
+                <li>负责机房网络的日常巡检，保证网络通信正常，及时解决网络中断等问题。</li>
+              </ul>
+              <div class="highlights">
+                <strong>核心能力</strong> · 多机房软硬件保障 · 交换机 / 服务器 / 打印机运维 · 网络巡检排障 · 教学环境快速部署 · 以修代换控成本
+              </div>
+            </div>
+          </section>
+
+          <section class="sec">
+            <h2 class="sec-title">工作内容摘要</h2>
+            <ul class="bullets">
+              <li><strong>计算机软硬件：</strong>装机、重装系统、驱动与补丁、主板/电源/硬盘/内存等常见硬件故障排查与维修。</li>
+              <li><strong>网络与交换机：</strong>机房局域网巡检，处理网络中断、端口与连通性问题，保障教学与办公网络可用。</li>
+              <li><strong>外围设备：</strong>打印机、监控设备、服务器及办公信息化设备的日常维护与故障响应。</li>
+              <li><strong>环境搭建：</strong>按教学/业务需求快速配置软件环境，保障机房与办公场景稳定运行。</li>
+            </ul>
+          </section>
+        </div>
+      </div>
+    </article>
+  </div>
+
+  <button class="to-top" id="toTop" type="button" aria-label="回到顶部" title="回到顶部">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 19V5M5 12l7-7 7 7"/>
+    </svg>
+  </button>
+
+  <script>
+    (function () {
+      var btn = document.getElementById("toTop");
+      function onScroll() {
+        if (window.scrollY > 320) btn.classList.add("show");
+        else btn.classList.remove("show");
+      }
+      window.addEventListener("scroll", onScroll, { passive: true });
+      btn.addEventListener("click", function () {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      });
+      onScroll();
+    })();
+  </script>
+</body>
+</html>
